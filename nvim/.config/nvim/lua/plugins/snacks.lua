@@ -6,11 +6,13 @@ return {
       picker = {
         sources = {
           explorer = {
+            hidden = true,
             layout = {
               layout = {
                 width = 60,
               },
             },
+            matcher = { fuzzy = true },
           },
         },
       },
