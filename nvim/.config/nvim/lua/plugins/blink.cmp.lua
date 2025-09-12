@@ -33,6 +33,7 @@ return {
         ["<C-f>"] = { "scroll_documentation_down", "fallback" },
 
         ["<C-k>"] = { "show_signature", "hide_signature", "fallback" },
+        ["<Cr>"] = { "fallback" },
       })
 
       return opts
