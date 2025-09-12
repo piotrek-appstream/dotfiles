@@ -14,3 +14,10 @@ vim.api.nvim_create_autocmd({ "VimEnter", "FocusGained" }, {
     theme.apply()
   end,
 })
+
+vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave" }, {
+  pattern = { "*.cs" },
+  callback = function()
+    pcall(vim.lsp.codelens.refresh)
+  end,
+})
