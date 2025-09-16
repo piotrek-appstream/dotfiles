@@ -1,3 +1,5 @@
 [user]
   name = Piotr Szyperski
   email = 129282647+piotrek-appstream@users.noreply.github.com
+[pull]
+	rebase = true
