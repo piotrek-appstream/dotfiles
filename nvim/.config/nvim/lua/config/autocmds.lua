@@ -9,21 +9,26 @@
 
 local theme = require("app.theme")
 
+local theme_group = vim.api.nvim_create_augroup("user_theme", { clear = true })
 vim.api.nvim_create_autocmd({ "VimEnter", "FocusGained" }, {
+  group = theme_group,
   callback = function()
     theme.apply()
   end,
 })
 
-vim.api.nvim_create_autocmd({ "BufEnter", "InsertLeave" }, { -- "CursorHold"
+local codelens_group = vim.api.nvim_create_augroup("user_roslyn_codelens", { clear = true })
+vim.api.nvim_create_autocmd({ "BufEnter", "InsertLeave" }, {
+  group = codelens_group,
   pattern = { "*.cs" },
   callback = function()
     pcall(vim.lsp.codelens.refresh)
   end,
 })
 
--- Disable spell check that's enabled by LaziVim by default.
+local spell_group = vim.api.nvim_create_augroup("user_disable_spell", { clear = true })
 vim.api.nvim_create_autocmd("FileType", {
+  group = spell_group,
   pattern = { "markdown", "gitcommit", "text", "plaintex", "typst" },
   callback = function()
     vim.opt_local.spell = false
