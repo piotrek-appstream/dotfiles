@@ -4,6 +4,7 @@ To apply:
 ```bash
 # cd to where repo is checked out.
 cd dotfiles
-stow git
-stow nvim
+# -t is target directory
+stow git -t ~ -v
+stow nvim -t ~ -v
 ```
