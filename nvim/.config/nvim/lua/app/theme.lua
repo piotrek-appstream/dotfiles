@@ -18,32 +18,72 @@ function M.register(name, fn)
   adapters[name] = fn
 end
 
+local function prefers_dark_from_gsettings()
+  local handle = io.popen("gsettings get org.gnome.desktop.interface color-scheme 2>/dev/null")
+  if not handle then
+    return nil
+  end
+
+  local output = handle:read("*a") or ""
+  handle:close()
+
+  if output:match("dark") then
+    return true
+  end
+
+  if output:match("light") then
+    return false
+  end
+end
+
+local function prefers_dark_from_kde()
+  local kdeglobals = os.getenv("HOME") .. "/.config/kdeglobals"
+  local file = io.open(kdeglobals, "r")
+  if not file then
+    return nil
+  end
+
+  local contents = file:read("*a") or ""
+  file:close()
+
+  if contents:match("ColorScheme=.*[Dd]ark") then
+    return true
+  end
+
+  if contents:match("ColorScheme=.*[Ll]ight") then
+    return false
+  end
+end
+
+local function prefers_dark_from_env()
+  local value = os.getenv("DARK_MODE") or os.getenv("DARKMODE")
+  if not value then
+    return nil
+  end
+
+  if value == "1" or value == "true" then
+    return true
+  end
+
+  if value == "0" or value == "false" then
+    return false
+  end
+end
+
+local detectors = {
+  prefers_dark_from_gsettings,
+  prefers_dark_from_kde,
+  prefers_dark_from_env,
+}
+
 -- ---- System dark-mode detection (overrideable) ----
 -- You can replace this with your own function: M.is_dark = function() ... end
 function M.is_dark()
-  -- Try GNOME
-  local h = io.popen("gsettings get org.gnome.desktop.interface color-scheme 2>/dev/null")
-  local out = h and h:read("*a") or ""
-  if h then
-    h:close()
-  end
-  if out:match("dark") then
-    return true
-  end
-
-  -- Try KDE (very heuristic)
-  local k = io.open(os.getenv("HOME") .. "/.config/kdeglobals", "r")
-  if k then
-    local txt = k:read("*a") or ""
-    k:close()
-    if txt:match("ColorScheme=.*[Dd]ark") then
-      return true
+  for _, detector in ipairs(detectors) do
+    local ok, choice = pcall(detector)
+    if ok and type(choice) == "boolean" then
+      return choice
     end
-  end
-
-  -- Try env hint
-  if (os.getenv("DARK_MODE") or os.getenv("DARKMODE")) == "1" then
-    return true
   end
 
   return false
