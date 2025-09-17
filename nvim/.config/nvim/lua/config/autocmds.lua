@@ -18,11 +18,39 @@ vim.api.nvim_create_autocmd({ "VimEnter", "FocusGained" }, {
 })
 
 local codelens_group = vim.api.nvim_create_augroup("user_roslyn_codelens", { clear = true })
-vim.api.nvim_create_autocmd({ "BufEnter", "InsertLeave" }, {
+vim.api.nvim_create_autocmd("LspAttach", {
   group = codelens_group,
-  pattern = { "*.cs" },
-  callback = function()
-    pcall(vim.lsp.codelens.refresh)
+  callback = function(args)
+    local data = args.data or {}
+    local client = data.client_id and vim.lsp.get_client_by_id(data.client_id)
+    if not client then
+      return
+    end
+
+    if not client.server_capabilities.codeLensProvider then
+      return
+    end
+
+    local bufnr = args.buf
+    if vim.bo[bufnr].filetype ~= "cs" then
+      return
+    end
+
+    local function refresh()
+      vim.schedule(function()
+        pcall(vim.lsp.codelens.refresh, { bufnr = bufnr })
+      end)
+    end
+
+    refresh()
+
+    vim.api.nvim_clear_autocmds({ group = codelens_group, buffer = bufnr })
+
+    vim.api.nvim_create_autocmd({ "BufEnter", "InsertLeave" }, {
+      group = codelens_group,
+      buffer = bufnr,
+      callback = refresh,
+    })
   end,
 })
 
