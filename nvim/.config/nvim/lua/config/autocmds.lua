@@ -27,6 +27,6 @@ vim.api.nvim_create_autocmd("FileType", {
   pattern = { "markdown", "gitcommit", "text", "plaintex", "typst" },
   callback = function()
     vim.opt_local.spell = false
-    vim.opt_local.wrap = false
+    vim.opt_local.wrap = true
   end,
 })
