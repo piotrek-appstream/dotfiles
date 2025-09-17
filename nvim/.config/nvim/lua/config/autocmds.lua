@@ -15,9 +15,18 @@ vim.api.nvim_create_autocmd({ "VimEnter", "FocusGained" }, {
   end,
 })
 
-vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave" }, {
+vim.api.nvim_create_autocmd({ "BufEnter", "InsertLeave" }, { -- "CursorHold"
   pattern = { "*.cs" },
   callback = function()
     pcall(vim.lsp.codelens.refresh)
+  end,
+})
+
+-- Disable spell check that's enabled by LaziVim by default.
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "markdown", "gitcommit", "text", "plaintex", "typst" },
+  callback = function()
+    vim.opt_local.spell = false
+    vim.opt_local.wrap = false
   end,
 })
