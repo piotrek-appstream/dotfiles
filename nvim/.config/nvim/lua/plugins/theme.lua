@@ -26,8 +26,36 @@ return {
     config = function()
       local theme = require("app.theme")
 
+      theme.settings.name = "catppuccin"
+      theme.settings.variants = { light = "latte", dark = "mocha" }
+      theme.settings.colorscheme = "catppuccin"
+
+      theme.register("catppuccin", function(opts)
+        local flavour = opts.variant
+        if vim.g.catppuccin_flavour ~= flavour then
+          vim.g.catppuccin_flavour = flavour
+          require("catppuccin").setup({
+            flavour = flavour,
+            float = { transparent = true, solid = false },
+          })
+        end
+
+        vim.cmd.colorscheme(theme.settings.colorscheme)
+      end)
+
+      theme.apply()
+    end,
+  },
+  {
+    "akinsho/bufferline.nvim",
+    optional = true,
+    opts = function(_, opts)
       local ok, integration = pcall(require, "catppuccin.groups.integrations.bufferline")
-      if ok and integration and integration.get_theme and not integration.get then
+      if not ok or not integration then
+        return opts
+      end
+
+      if integration.get_theme and not integration.get then
         integration.get = function(...)
           local highlights = integration.get_theme(...)
           if type(highlights) == "function" then
