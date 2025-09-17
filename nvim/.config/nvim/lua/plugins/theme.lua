@@ -26,6 +26,17 @@ return {
     config = function()
       local theme = require("app.theme")
 
+      local ok, integration = pcall(require, "catppuccin.groups.integrations.bufferline")
+      if ok and integration and integration.get_theme and not integration.get then
+        integration.get = function(...)
+          local highlights = integration.get_theme(...)
+          if type(highlights) == "function" then
+            highlights = highlights()
+          end
+          return highlights
+        end
+      end
+
       theme.settings.name = "catppuccin"
       theme.settings.variants = { light = "latte", dark = "mocha" }
       theme.settings.colorscheme = "catppuccin"
@@ -41,6 +52,30 @@ return {
         end
 
         vim.cmd.colorscheme(theme.settings.colorscheme)
+      end)
+
+      theme.apply()
+    end,
+  },
+  {
+    "folke/tokyonight.nvim",
+    enabled = false,
+    lazy = false,
+    config = function()
+      local theme = require("app.theme")
+
+      theme.settings.name = "tokyonight"
+      theme.settings.variants = { light = "day", dark = "night" }
+      theme.settings.colorscheme = "tokyonight"
+
+      theme.register("tokyonight", function(opts)
+        local style = opts.variant
+        require("tokyonight").setup({
+          style = style,
+          on_colors = function(_) end,
+          on_highlights = function(_, _) end,
+        })
+        vim.cmd.colorscheme("tokyonight-" .. style)
       end)
 
       theme.apply()
