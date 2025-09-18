@@ -1,7 +1,7 @@
 return {
   {
     "zenbones-theme/zenbones.nvim",
-    enabled = false,
+    enabled = true,
     dependencies = "rktjmp/lush.nvim",
     config = function()
       local theme = require("app.theme")
@@ -20,6 +20,7 @@ return {
   },
   {
     "catppuccin/nvim",
+    enabled = false,
     name = "catppuccin",
     lazy = false,
     priority = 1000,
