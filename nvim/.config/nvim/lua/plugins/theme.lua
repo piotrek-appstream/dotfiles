@@ -1,14 +1,14 @@
 return {
   {
     "zenbones-theme/zenbones.nvim",
-    enabled = true,
+    enabled = false,
     dependencies = "rktjmp/lush.nvim",
     config = function()
       local theme = require("app.theme")
 
       theme.settings.name = "zenbones"
       theme.settings.variants = { light = "light", dark = "dark" }
-      theme.settings.colorscheme = "zenbones"
+      theme.settings.colorscheme = "zenburned"
 
       theme.register("zenbones", function(opts)
         vim.o.background = opts.variant
@@ -60,13 +60,13 @@ return {
   },
   {
     "folke/tokyonight.nvim",
-    enabled = false,
+    enabled = true,
     lazy = false,
     config = function()
       local theme = require("app.theme")
 
       theme.settings.name = "tokyonight"
-      theme.settings.variants = { light = "day", dark = "night" }
+      theme.settings.variants = { light = "night", dark = "night" }
       theme.settings.colorscheme = "tokyonight"
 
       theme.register("tokyonight", function(opts)

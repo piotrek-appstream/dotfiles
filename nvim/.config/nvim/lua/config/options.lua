@@ -4,3 +4,4 @@
 
 vim.o.relativenumber = true
 vim.o.scrolloff = 15
+vim.o.mouse = "v"
